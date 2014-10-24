@@ -1,6 +1,7 @@
 WorkerPool
 ==========
 
+![swimming pool](logo.png)
 
 Config:
 
