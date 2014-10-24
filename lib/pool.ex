@@ -35,7 +35,7 @@ defmodule WorkerPool.Pool do
     end
 
     defp reload_workers(state=%{pool_name: pool_name}) do
-        SQL.execute("DELETE FROM workerpool WHERE pool=? AND enabled=true AND last_update>now();", [pool_name])
+        SQL.execute("DELETE FROM workerpool WHERE pool=? AND enabled=true AND last_update<now();", [pool_name])
         case SQL.run("SELECT name FROM workerpool WHERE pool=? AND enabled=true AND last_update>now();", [pool_name]) do
             [] -> %{state| workers: :queue.new}
             data -> %{state| workers: Enum.reduce(data, :queue.new, fn([name: name], acc) -> :queue.in(name, acc) end) }
