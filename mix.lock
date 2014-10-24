@@ -1,4 +1,4 @@
 %{"discachex": {:git, "ssh://git@git.aka.wtf:7999/libs/discachex.git", "a546d877e258d8afc7a583336d8360b3c319f162", []},
   "emysql": {:git, "git://github.com/Eonblast/Emysql.git", "c7e2103f8b737667f0128802e8de2f0d5ed2fa5c", []},
   "exsouth": {:git, "git://github.com/SkAZi/exsouth.git", "64b87405269bfc98cd900b76ecd14dd2349b2814", []},
-  "sqlex": {:git, "git://github.com/SkAZi/sqlex.git", "074cb0f09c88c6dd146ae900118de66432488a10", []}}
+  "sqlex": {:git, "git://github.com/SkAZi/sqlex.git", "9334a9205b5372464dd71dec5d5e176e669d65bc", []}}
