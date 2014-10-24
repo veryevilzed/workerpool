@@ -4,7 +4,10 @@ defmodule WorkerPool do
     def start(_type, _args) do
         import Supervisor.Spec, warn: false
         
-        Application.get_env(:workerpool, :mysql, []) |> SQL.init
+        case Application.get_env(:workerpool, :mysql, nil) do
+            nil -> :ok
+            data -> data |> SQL.init
+        end
 
         default_pool = [{:default_pool, [refresh_timeout: 10000, worker_life_time: 30000]}]
 
