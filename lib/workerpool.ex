@@ -6,7 +6,12 @@ defmodule WorkerPool do
         
         case Application.get_env(:workerpool, :mysql, nil) do
             nil -> :ok
-            data -> data |> SQL.init
+            data -> 
+                case data |> SQL.init do
+                    {:error, :pool_already_exists} -> :ok
+                    :ok -> :ok
+                    {:error, error} -> raise error
+                end
         end
 
         default_pool = [{:default_pool, [refresh_timeout: 10000, worker_life_time: 30000]}]
