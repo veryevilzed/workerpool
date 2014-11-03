@@ -4,7 +4,6 @@ defmodule WorkerPool.Pool do
 
     @pool Keyword.get(Application.get_env(:workerpool, :mysql, []), :pool, :mp)
 
-
     defp state(), do: %{ pool_name: "default", workers: :queue.new, refresh_timeout: 60000, worker_life_time: 120000  }
 
     def start_link(opts \\ []) do
@@ -16,7 +15,6 @@ defmodule WorkerPool.Pool do
     defp atos(a) when is_atom(a), do: Atom.to_string(a)
     defp atos(a), do: a
         
-
     def init(opts \\ []) do
         {:ok, 
             %{ state() | 
