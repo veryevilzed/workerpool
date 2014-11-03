@@ -30,6 +30,7 @@ defmodule WorkerPool do
 
     def update(pool \\ :default_pool, worker), do: GenServer.call(pool, {:update, worker})
     def get(pool \\ :default_pool), do: GenServer.call(pool, :get)
+    def get_by_key(key \\ 0, pool \\ :default_pool), do: GenServer.call(pool, {:get, key})
     def reload(pool \\ :default_pool), do: GenServer.call(pool, :reload)
 
 end

@@ -54,6 +54,14 @@ defmodule WorkerPool.Pool do
     end
 
     def handle_call(:reload, _sender, state), do: {:reply, :ok, reload_workers(state) }
+    
+    def handle_call({:get, key}, _sender, state=%{workers: {[],[]} }), do: {:reply, nil, state }
+    def handle_call({:get, key}, _sender, state=%{workers: q}) do        
+        {{:value, item}, q} = :queue.out(q)
+        {:reply, item, %{state | workers: :queue.in(item, q) }}
+    end
+
+
     def handle_call(:get, _sender, state=%{workers: {[],[]} }), do: {:reply, nil, state }
     def handle_call(:get, _sender, state=%{workers: q}) do
         
