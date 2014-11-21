@@ -65,3 +65,22 @@ WorkerPool.get :pool_1
 => nil
 
 ```
+
+Get TRX Worker
+
+```
+WorkerPool.get_trx "my_trx_task1"
+=>  "my_worker_name"
+
+# Transaction "my_trx_task1" locked for worker "my_worker_name"
+
+WorkerPool.get_trx "my_trx_task2"
+=>  "my_second_worker_name"
+
+WorkerPool.get_trx "my_trx_task1"
+=>  "my_worker_name"
+
+WorkerPool.get_trx "my_trx_task1"
+=>  "my_worker_name"
+
+```
