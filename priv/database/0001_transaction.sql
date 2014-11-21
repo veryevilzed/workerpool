@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS workerpool_transaction_lock (
 ) ENGINE=InnoDB CHARACTER SET=UTF8;
 
 
-
-CREATE PROCEDURE IF NOT EXISTS sp_workerpool_get_lock(_pool VARCHAR(60), _trx VARCHAR(64))
+CREATE PROCEDURE sp_workerpool_get_lock(_pool VARCHAR(60), _trx VARCHAR(64))
+BEGIN
     DECLARE _worker VARCHAR(65);
     DECLARE exit handler for sqlexception
       BEGIN
@@ -20,19 +20,19 @@ CREATE PROCEDURE IF NOT EXISTS sp_workerpool_get_lock(_pool VARCHAR(60), _trx VA
         SELECT 'error' as status, @message as message;
       ROLLBACK;
     END;
-BEGIN
-    START TRANSACTION 
-        SELECT name INTO _worker FROM workerpool_transaction_lock WHERE pool = _pool, trx = _trx;
+
+    START TRANSACTION;
+        SELECT name INTO _worker FROM workerpool_transaction_lock WHERE pool=_pool AND trx=_trx;
         IF _worker IS NULL THEN
-            SELECT name INTO _worker FROM workerpool WHERE TIMESTAMPDIFF(MINUTE, last_update, now()) < 50 ORDER BY RAND() LIMIT 1; #TODO
+            SELECT name INTO _worker FROM workerpool WHERE last_update>now() ORDER BY RAND() LIMIT 1; #TODO
             IF _worker IS NULL THEN
                 SELECT 'error' AS status, 'worker not found' as message;
             ELSE
-                INSERT INTO workerpool_transaction_lock (name, trx, pool) VALUES (_worker, _trx, _pool);
+                INSERT INTO workerpool_transaction_lock(name, trx, pool) VALUES (_worker, _trx, _pool);
                 SELECT 'ok' AS status, _worker AS worker;
             END IF;
         ELSE
-            UPDATE workerpool_transaction_lock SET last_update=now() WHERE pool = _pool, trx = _trx;
+            UPDATE workerpool_transaction_lock SET last_update=now() WHERE pool=_pool AND trx=_trx;
             SELECT 'ok' AS status, _worker AS worker;
         END IF;
     COMMIT;

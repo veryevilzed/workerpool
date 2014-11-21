@@ -12,14 +12,16 @@ defmodule WorkerPool.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :sqlex, :exsouth],
+    [applications: [:logger, :sqlex, :exsouth, :cache, :folsom],
      mod: {WorkerPool, []}]
   end
 
   defp deps do
     [
       {:sqlex, github: "SkAZi/sqlex"},
-      {:exsouth, github: "SkAZi/exsouth"}
+      {:exsouth, github: "SkAZi/exsouth"},
+      {:cache, github: "fogfish/cache"},
+      {:folsom, github: "boundary/folsom" }
     ]
   end
 end

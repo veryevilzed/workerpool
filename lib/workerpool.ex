@@ -14,14 +14,15 @@ defmodule WorkerPool do
                 end
         end
 
+        :folsom_metrics.new_histogram :workerpool_requests, :slide, 60
+        :folsom_metrics.new_histogram :workerpool_requests_error, :slide, 60
+
         default_pool = [{:default_pool, [refresh_timeout: 10000, worker_life_time: 30000]}]
-
         pools_config = Dict.merge(default_pool, Application.get_env(:workerpool, :pools, []))
-
         children = pools_config |> Enum.map(fn({pool_name, pool_config}) -> 
             id = String.to_atom("#{pool_name}")
             pool_config = pool_config |> Dict.put(:pool_name, pool_name)
-            worker(WorkerPool.Pool, [[id: id, config: pool_config]], [id: id] )
+            worker(WorkerPool.Pool, [[id: id, config: pool_config]], [id: id])
         end)
 
         opts = [strategy: :one_for_one, max_restarts: 5000, max_seconds: 10, name: WorkerPool.Supervisor]
@@ -30,6 +31,7 @@ defmodule WorkerPool do
 
     def update(pool \\ :default_pool, worker), do: GenServer.call(pool, {:update, worker})
     def get(pool \\ :default_pool), do: GenServer.call(pool, :get)
+    def get_trx(pool \\ :default_pool, trx) when is_binary(trx), do: GenServer.call(pool, {:get, trx})
     def reload(pool \\ :default_pool), do: GenServer.call(pool, :reload)
-
+    
 end

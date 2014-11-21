@@ -2,6 +2,8 @@ defmodule WorkerPool.Pool do
     
     require Logger
 
+
+
     @pool Keyword.get(Application.get_env(:workerpool, :mysql, []), :pool, :mp)
 
 
@@ -54,11 +56,31 @@ defmodule WorkerPool.Pool do
     end
 
     def handle_call(:reload, _sender, state), do: {:reply, :ok, reload_workers(state) }
+    
+    def handle_call({:get, trx}, _sender, state=%{pool_name: pool_name}) do
+        :folsom_metrics.notify :workerpool_requests, 1
+        case :cache.get(:workerpool_cache, "#{pool_name}_#{trx}") do
+            :undefined ->
+                res = SQL.call("CALL sp_workerpool_get_lock(?,?);", [pool_name, trx]) |> WorkerPool.Utils.get_run_result("Error in CALL sp_workerpool_get_lock", ignore_errors: false)
+                case res do
+                    {:error, err} -> 
+                        Logger.error "Error get worker in pool #{pool_name}"
+                        :folsom_metrics.notify :workerpool_requests_error, 1
+                        {:reply, nil, state}
+                    %{status: "ok", worker: worker} -> 
+                        :cache.put(:workerpool_cache, "#{pool_name}_#{trx}", worker)
+                        Logger.debug "Return worker #{pool_name}.#{worker}"
+                        {:reply, worker, state}
+                end
+            worker -> 
+                Logger.debug "Return worker #{pool_name}.#{worker} from cache"
+                {:reply, worker, state}
+        end
+    end
+
     def handle_call(:get, _sender, state=%{workers: {[],[]} }), do: {:reply, nil, state }
     def handle_call(:get, _sender, state=%{workers: q}) do
-        
         {{:value, item}, q} = :queue.out(q)
-        
         {:reply, item, %{state | workers: :queue.in(item, q) }}
     end
 

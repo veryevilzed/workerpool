@@ -1,4 +1,8 @@
-%{"discachex": {:git, "ssh://git@git.aka.wtf:7999/libs/discachex.git", "a546d877e258d8afc7a583336d8360b3c319f162", []},
+%{"bear": {:git, "git://github.com/boundary/bear.git", "119234548783af19b8ec75c879c5062676b92571", [tag: "0.8.2"]},
+  "cache": {:git, "git://github.com/fogfish/cache.git", "339350bbe9334df2b44c207f376a3f8b6a8f6658", []},
+  "discachex": {:git, "ssh://git@git.aka.wtf:7999/libs/discachex.git", "a546d877e258d8afc7a583336d8360b3c319f162", []},
   "emysql": {:git, "git://github.com/Eonblast/Emysql.git", "c7e2103f8b737667f0128802e8de2f0d5ed2fa5c", []},
   "exsouth": {:git, "git://github.com/SkAZi/exsouth.git", "64b87405269bfc98cd900b76ecd14dd2349b2814", []},
+  "folsom": {:git, "git://github.com/boundary/folsom.git", "38e2cce7c64ce1f0a3a918d90394cfc0a940b1ba", []},
+  "meck": {:git, "git://github.com/eproxus/meck", "dde759050eff19a1a80fd854d7375174b191665d", [tag: "0.8.2"]},
   "sqlex": {:git, "git://github.com/SkAZi/sqlex.git", "9334a9205b5372464dd71dec5d5e176e669d65bc", []}}
