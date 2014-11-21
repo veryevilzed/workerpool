@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS workerpool (
     enabled BOOLEAN DEFAULT true,
     PRIMARY KEY(name, pool)
 ) ENGINE=InnoDB CHARACTER SET=UTF8;
+
+
