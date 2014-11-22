@@ -5,7 +5,7 @@ defmodule WorkerPool.Pool do
 
 
     @pool Keyword.get(Application.get_env(:workerpool, :mysql, []), :pool, :mp)
-
+    @trx_lock_timeout :timer.minutes 60
 
     defp state(), do: %{ pool_name: "default", workers: :queue.new, refresh_timeout: 60000, worker_life_time: 120000  }
 
@@ -61,7 +61,7 @@ defmodule WorkerPool.Pool do
         :folsom_metrics.notify :workerpool_requests, 1
         case :cache.get(:workerpool_cache, "#{pool_name}_#{trx}") do
             :undefined ->
-                res = SQL.call("CALL sp_workerpool_get_lock(?,?);", [pool_name, trx]) |> WorkerPool.Utils.get_run_result("Error in CALL sp_workerpool_get_lock", ignore_errors: false)
+                res = SQL.call("CALL sp_workerpool_get_lock(?,?,?);", [pool_name, trx, @trx_lock_timeout], @pool) |> WorkerPool.Utils.get_run_result("Error in CALL sp_workerpool_get_lock", ignore_errors: false)
                 case res do
                     {:error, err} -> 
                         Logger.error "Error get worker in pool #{pool_name}"
