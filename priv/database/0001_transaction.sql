@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS workerpool_transaction_lock (
     UNIQUE(trx, pool)
 ) ENGINE=InnoDB CHARACTER SET=UTF8;
 
-
+DELIMITER $$
+DROP PROCEDURE sp_workerpool_get_lock;
 CREATE PROCEDURE sp_workerpool_get_lock(_pool VARCHAR(60), _trx VARCHAR(64), _timeout_seconds INT)
 BEGIN
     DECLARE _worker VARCHAR(65);
@@ -22,7 +23,7 @@ BEGIN
     END;
 
     START TRANSACTION;
-        DELETE FROM workerpool_transaction_lock WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(last_update) < _timeout_seconds;
+        DELETE FROM workerpool_transaction_lock WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(last_update) > _timeout_seconds LIMIT 10;
         SELECT name INTO _worker FROM workerpool_transaction_lock WHERE pool=_pool AND trx=_trx;
         IF _worker IS NULL THEN
             SELECT name INTO _worker FROM workerpool WHERE last_update>now() ORDER BY RAND() LIMIT 1;
@@ -37,4 +38,6 @@ BEGIN
             SELECT 'ok' AS status, _worker AS worker;
         END IF;
     COMMIT;
-END; 
+END; $$
+
+DELIMITER ;
