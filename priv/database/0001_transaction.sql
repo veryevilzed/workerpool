@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS workerpool_transaction_lock (
     UNIQUE(trx, pool)
 ) ENGINE=InnoDB CHARACTER SET=UTF8;
 
-DELIMITER $$
-DROP PROCEDURE sp_workerpool_get_lock;
+
 CREATE PROCEDURE sp_workerpool_get_lock(_pool VARCHAR(60), _trx VARCHAR(64), _timeout_seconds INT)
 BEGIN
     DECLARE _worker VARCHAR(65);
@@ -38,6 +37,4 @@ BEGIN
             SELECT 'ok' AS status, _worker AS worker;
         END IF;
     COMMIT;
-END; $$
-
-DELIMITER ;
+END;

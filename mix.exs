@@ -21,7 +21,7 @@ defmodule WorkerPool.Mixfile do
       {:sqlex, github: "SkAZi/sqlex"},
       {:exsouth, github: "SkAZi/exsouth"},
       {:cache, github: "fogfish/cache"},
-      {:folsom, github: "boundary/folsom" }
+      {:folsom, github: "boundary/folsom"}
     ]
   end
 end
